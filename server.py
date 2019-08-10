@@ -1,26 +1,13 @@
-from commands import Command
+from .game import Game
 from threading import Thread
+
+import commands
+import events
 import socket
 import sys
 
 PORT = len(sys.argv) > 1 and sys.argv[1] or 65432
-threads = []
-
-def handle_command(cmd):
-    pass
-
-def connection(conn, addr):
-    print('New socket:', addr)
-    while True:
-        try:
-            data = conn.recv(1024)
-            if not data:
-                # Connection closed.
-                break
-            handle_command(data.decode('utf-8'))
-        except OSError:
-            # Connection closed.
-            break
+game = Game()
 
 with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as sock:
     sock.bind(('127.0.0.1', PORT))
@@ -29,9 +16,9 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as sock:
         try:
             conn, addr = sock.accept()
             with conn:
-                thread = Thread(target=connection, args=(conn, addr))
-                threads.append(thread)
-                thread.start()
+                game.connection(conn, addr)
         except KeyboardInterrupt:
             print('\u001B[1KExiting...')
+            game.server_close()
+            sock.close()
             break
