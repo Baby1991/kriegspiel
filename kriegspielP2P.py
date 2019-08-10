@@ -1,25 +1,34 @@
 import chess
 import os
 import socket
-board = chess.Board()
 
 clear = lambda: os.system('cls')
 
+def host(ip,port):
+    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as sock:
+        sock.bind((ip,port))
+        sock.listen()
+        while True:
+            try:
+                conn, addr = sock.accept()
+                return(conn,addr)
+            except KeyboardInterrupt:
+                exit()
+                
+def connect(ip,port):
+    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as sock:
+        sock.connect((ip, port))
+        return sock
+        
+        
+
 def printBoard(turn):
-    print("  ╔═════════════════╗")
-    boardString = "8 ║ "
-    line=8
+    boardString = ""
     for i in board.__str__():
-        if i=='\n':
-            line-=1 
-            boardString += ' ║\n' + str(line) +' ║ '
-        elif (turn and i>='a' and i<='z'): boardString += '.'
+        if (turn and i>='a' and i<='z'): boardString += '.'
         elif((not turn) and i>='A' and i<='Z'): boardString += '.'
-        else: boardString+=i
-    print(boardString+" ║")
-    
-    print("  ╚═════════════════╝")
-    print("    A B C D E F G H")
+        else: boardString+=i 
+    print(boardString)
 
 def Partija():
     partijaOn=True
@@ -39,18 +48,20 @@ def Partija():
                 printBoard(not board.turn)
                 potvrda=input("Confirm?(y/n): ")
                 if(potvrda!="y"): board.pop()
-        
+            
         if not board.is_game_over:
             print("\n"+str(board.result))
             partijaOn=False
-    
-       
-while True:
-    Partija()
-    response=input("New Game?(y/n): ")
 
-    
+HOST = '127.0.0.1'
+PORT = 65432
+response=input("Host/Join?\n")
+
+if response=="Host":
+    konekcija,adresa=host(HOST,PORT)
+else:
+    soket=host(HOST,PORT)
 
 
-    
+
     
