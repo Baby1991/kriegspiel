@@ -30,43 +30,47 @@ def printBoard(board,turn,fog):
 
 def Partija(board, krieg):
     clear()
-    partijaOn=True
-    while partijaOn:
+    while True:
         try:
-            clear()    
-            input("White plays" if board.turn else "Black plays")
-            clear()
-            printBoard(board,board.turn, krieg)
-            print("Available moves:")
-            for i in board.legal_moves:
-                print(i.uci())
-            potez=input("Move: ")
-            for i in board.legal_moves:
-                if i.uci()==potez:
-                    """and board.piece_at(i.from_square).color==board.turn"""
-                    board.push_uci(potez)
-                    clear()
-                    printBoard(board,not board.turn, krieg)
-                    potvrda=input("Confirm?(y/n): ")
-                    clear()
-                    if(potvrda!="y"):
-                        board.pop()
+            if board.is_game_over()  != True:
+                clear()    
+                input("White plays" if board.turn else "Black plays")
+                clear()
+                printBoard(board,board.turn, krieg)
+                print("Available moves:")
+                for i in board.legal_moves:
+                    print(i.uci())
+                potez=input("Move: ")
+                for i in board.legal_moves:
+                    if i.uci()==potez:
+                        """and board.piece_at(i.from_square).color==board.turn"""
+                        board.push_uci(potez)
                         clear()
-                    else:
-                        if board.turn and krieg:
+                        printBoard(board,not board.turn, krieg)
+                        potvrda=input("Confirm?(y/n): ")
+                        clear()
+                        if(potvrda!="y"):
+                            board.pop()
                             clear()
-                            potvrda=input("Judge time?(y/n)\n")
-                            if(potvrda=="y"):
+                        else:
+                            if board.turn and krieg:
                                 clear()
-                                input(board)
-                                clear()
-                                input("Judge time over")
-                    clear()
+                                potvrda=input("Judge time?(y/n)\n")
+                                if(potvrda=="y"):
+                                    clear()
+                                    input(board)
+                                    clear()
+                                    input("Judge time over")
+                        clear()
+            else:
+                print(board.result())
+                response=input("Another one?(y/n): ")
+                if response!='y':
+                    break
+                else:
+                    board.reset()
         except KeyboardInterrupt:
             clear()
-            break
-        except len(board.legal_moves)==0:
-            print(board.result)
             break
             
                 
@@ -80,7 +84,8 @@ def Partija(board, krieg):
         
 def TipIgre():
     response=""
-    while response!="y":
+    while True:
+        clear()
         ulaz=input("Choose game type (Classic, Atomic, Crazyhouse, Suicide, Giveaway, King of the Hill, Racing Kings, Three-check, Horde):\n")
         if ulaz=="Classic":board = chess.Board()
         elif ulaz=="Atomic":board = chess.variant.AtomicBoard()
@@ -92,13 +97,18 @@ def TipIgre():
         elif ulaz=="Three-check":board = chess.variant.ThreeCheckBoard()
         elif ulaz=="Horde":board = chess.variant.HordeBoard()
         else: board = chess.Board()
-        print(board)
-        response=input("\nThis good?(y/n)\n")
-        clear()
         if input("Kriegspiel?(y/n)\n")=='y':
             krieg=True
+            printBoard(board,True,True)
+            printBoard(board,False,True)
         else:
             krieg=False
+            printBoard(board,True,False)
+        
+        if input("\nThis good?(y/n)\n")=='y':
+            break
+        clear()
+        
     return board,krieg
 
 while True:
