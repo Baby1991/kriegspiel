@@ -65,6 +65,9 @@ def Partija(board, krieg):
         except KeyboardInterrupt:
             clear()
             break
+        except len(board.legal_moves)==0:
+            print(board.result)
+            break
             
                 
                          
