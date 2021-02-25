@@ -16,6 +16,9 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as sock:
         try:
             conn, addr = sock.accept()
             with conn:
+                if len(game.players) == 2:
+                    conn.close()
+                    continue
                 game.connection(conn, addr)
         except KeyboardInterrupt:
             print('\u001B[1KExiting...')

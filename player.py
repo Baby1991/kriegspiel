@@ -1,12 +1,16 @@
+from events import Event, MoveEvent
 from threading import Thread
+from .game import Game
 
 import commands
+import socket
 
 class Player(Thread):
+    connection: socket = None
     def __init__(self, connection: socket, address, game: Game):
         super.__init__(self)
         self.address = address
-        self.connection = connection
+        self.connection: socket = connection
         self.game = game
 
     def start(self):
@@ -25,8 +29,17 @@ class Player(Thread):
 
     def command(self, cmd):
         command = commands.parse(cmd)
-        # command
+        command.start(self, self.game)
 
     def join(self):
         super.join(self)
         self.connection.close()
+
+    def event(self, event: Event):
+        self.connection.send('%b' % event)
+
+    def opponent(self):
+        self.game.opponent_of(self)
+
+    def start_move(self):
+        self.connection.send('%b' % MoveEvent(self.game.board.legal_moves))

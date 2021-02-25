@@ -5,7 +5,7 @@ import typing
 
 class Game:
     board: chess.Board = chess.Board()
-    players = []
+    players: list = []
 
     def connection(self, conn, addr):
         new_player = Player(conn, addr, self)
@@ -19,3 +19,6 @@ class Game:
     def server_close(self):
         for player in players:
             player.join()
+
+    def opponent_of(self, player: Player):
+        self.players[int(not self.players.index(player))]

@@ -9,23 +9,23 @@ from .start import StartEvent
 
 import typing
 
-def parse(event: str, game: Game) -> Event:
+def parse(event: str) -> Event:
     spl = event.split(' ')
     evt = spl[0].lower()
     args = spl[1:]
     if evt == 'busy':
-        return BusyEvent(args, game)
+        return BusyEvent(args)
     elif evt == 'error':
-        return ErrorEvent(args, game)
+        return ErrorEvent(args)
     elif evt == 'invalid':
-        return InvalidEvent(args, game)
+        return InvalidEvent(args)
     elif evt == 'move':
-        return MoveEvent(args, game)
+        return MoveEvent(args)
     elif evt == 'queue':
-        return QueueEvent(args, game)
+        return QueueEvent(args)
     elif evt == 'result':
-        return ResultEvent(args, game)
+        return ResultEvent(args)
     elif evt == 'start':
-        return StartEvent(args, game)
+        return StartEvent(args)
     else:
-        return ErrorEvent(['no-event'], game)
+        return ErrorEvent(['no-event'])
